@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
+      - COQUI_API_KEY=${COQUI_API_KEY}
+      - EVO_FERNET_KEY=${EVO_FERNET_KEY}
+    volumes:
+      - ./backend:/app
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+  worker:
+    image: python:3.11-slim
+    command: ["sleep", "infinity"]
+    volumes:
+      - ./backend:/app
+    environment:
+      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
